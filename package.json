@@ -1,0 +1,21 @@
+{
+  "name": "text-searcher",
+  "version": "1.0.0",
+  "description": "A command line tool to search texts in directories and sub-directories",
+  "main": "main.ts",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "ts-node src/main.ts",
+    "test": "jest"
+  },
+  "author": "YI Zhiyue",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^25.2.2",
+    "jest": "^26.0.1",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
+  }
+}
