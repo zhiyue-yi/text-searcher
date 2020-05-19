@@ -6,7 +6,7 @@ import {
 } from './utils';
 
 async function search(dir: string, keyword: string) {
-  await validateDir(dir);
+  validateDir(dir);
 
   const fileList = await findAllFiles(dir);
 

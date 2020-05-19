@@ -7,11 +7,11 @@ import { Result } from './types';
  * Validate a directory by checking its existance
  * @param dir Directory to validate
  */
-export async function validateDir(dir: string) {
+export function validateDir(dir: string) {
   const pathInfo = fs.statSync(dir);
 
-  if (!pathInfo.isDirectory) {
-    throw Error(`Directory is not existed: ${dir}`);
+  if (!pathInfo.isDirectory()) {
+    throw Error(`The path is not a directory: ${dir}`);
   }
 }
 
@@ -33,7 +33,7 @@ export async function findAllFiles(dir: string) {
     const isDirectory = fs.statSync(currentDir).isDirectory();
 
     if (isDirectory) {
-      const subDirs = await collectDirs(currentDir);
+      const subDirs = collectDirs(currentDir);
       dirQueue.push(...subDirs);
     } else {
       fileList.push(currentDir);
@@ -47,7 +47,7 @@ export async function findAllFiles(dir: string) {
  * Collect paths for a given directory's sub-directory and files
  * @param dir
  */
-export async function collectDirs(dir: string) {
+export function collectDirs(dir: string) {
   const files = fs.readdirSync(dir).map((file) => `${dir}/${file}`);
   return files;
 }
