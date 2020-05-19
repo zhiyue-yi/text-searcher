@@ -34,7 +34,6 @@ export async function findAllFiles(dir: string) {
     if (isDirectory) {
       console.log(`Reading from: ${currentDir}`);
       const subDirs = collectDirs(currentDir);
-      console.log(subDirs);
       dirQueue.push(...subDirs);
     } else {
       fileList.push(currentDir);
@@ -91,9 +90,15 @@ export async function searchKeywordFromFiles(
  * Print results
  * @param results
  */
-export function printResults(results: Result[]) {
+export function printResults(results: Result[], fileList: string[]) {
   results.forEach((result) => {
     console.log(`File: ${result.file}`);
     console.log(`Line: ${result.line}`);
   });
+
+  const uniqueFiles = [...new Set(results.map((result) => result.file))];
+
+  console.log(`Count of searched files: ${fileList.length}`);
+  console.log(`Count of files containing keyword: ${uniqueFiles.length}`);
+  console.log(`Count of lines containing keyword: ${results.length}`);
 }

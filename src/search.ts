@@ -12,7 +12,7 @@ async function search(dir: string, keyword: string) {
 
   const results = await searchKeywordFromFiles(fileList, keyword);
 
-  printResults(results);
+  printResults(results, fileList);
 }
 
 export default search;

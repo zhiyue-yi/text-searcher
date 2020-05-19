@@ -8,4 +8,11 @@ if (!dir || !keyword) {
   );
 }
 
-search(dir, keyword);
+const start = new Date().getTime();
+search(dir, keyword).then(() => {
+  const end = new Date().getTime();
+  const duration = (end - start) / 1000;
+  console.log(`Time elapsed: ${duration} seconds`);
+
+  process.exit();
+});
