@@ -28,12 +28,13 @@ export async function findAllFiles(dir: string) {
 
   do {
     const currentDir = dirQueue.pop();
-    console.log(`Reading from: ${currentDir}`);
 
     const isDirectory = fs.statSync(currentDir).isDirectory();
 
     if (isDirectory) {
+      console.log(`Reading from: ${currentDir}`);
       const subDirs = collectDirs(currentDir);
+      console.log(subDirs);
       dirQueue.push(...subDirs);
     } else {
       fileList.push(currentDir);
