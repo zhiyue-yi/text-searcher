@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as readline from 'readline';
 import { Result } from './types';
+import { MAX_OPEN_FILE_COUNT } from './constants';
 
 /**
  * Validate a directory by checking its existance
@@ -32,7 +33,7 @@ export async function findAllFiles(dir: string) {
     const isDirectory = fs.statSync(currentDir).isDirectory();
 
     if (isDirectory) {
-      console.log(`Reading from: ${currentDir}`);
+      console.log(`File queued: ${currentDir}`);
       const subDirs = collectDirs(currentDir);
       dirQueue.push(...subDirs);
     } else {
@@ -61,28 +62,53 @@ export async function searchKeywordFromFiles(
   fileList: string[],
   keyword: string,
 ) {
+  console.log(fileList.length);
   const results: Result[] = [];
+  const openedFilesMap = {};
+  const tasks = [];
+  let fileIndex = 0;
 
-  const tasks = fileList.map(async (file: string) => {
-    return new Promise((resolve) => {
-      const rl = readline.createInterface({
-        input: fs.createReadStream(file),
-      });
+  while (fileIndex < fileList.length) {
+    if (Object.keys(openedFilesMap).length < MAX_OPEN_FILE_COUNT) {
+      tasks.push(
+        new Promise((resolve) => {
+          const file = fileList[fileIndex];
 
-      let lineNo = 1;
+          const stream = fs.createReadStream(file);
+          const rl = readline.createInterface({
+            input: stream,
+          });
 
-      rl.on('line', (line: string) => {
-        if (new RegExp(keyword, 'g').test(line)) {
-          results.push({ file, line: lineNo });
-        }
-        lineNo++;
-      });
+          openedFilesMap[file] = true;
 
-      rl.on('close', () => resolve());
-    });
-  });
+          let lineNo = 1;
+
+          rl.on('line', (line: string) => {
+            if (new RegExp(keyword, 'g').test(line)) {
+              results.push({ file, line: lineNo });
+              rl.close();
+              rl.removeAllListeners();
+              stream.destroy();
+            }
+            lineNo++;
+          });
+
+          stream.on('close', () => {
+            resolve();
+            delete openedFilesMap[file];
+          });
+        }),
+      );
+      fileIndex++;
+    } else {
+      // Need to let main event halt, and execute sub events
+      // It could be better if there is Promise.any(), which is currently in TC39 Candidate Stage
+      await Promise.all(tasks);
+    }
+  }
 
   await Promise.all(tasks);
+
   return results;
 }
 
@@ -102,3 +128,27 @@ export function printResults(results: Result[], fileList: string[]) {
   console.log(`Count of files containing keyword: ${uniqueFiles.length}`);
   console.log(`Count of lines containing keyword: ${results.length}`);
 }
+
+// /**
+//  * Polyfill for Promise.any which is currently in TC39 Candidate Stage
+//  * The promise any gets resolved if any of the promise from the array gets resolved
+//  * From https://github.com/tc39/proposal-promise-any/issues/6
+//  * @param promises
+//  */
+// export async function promiseAny(promises: Promise<any>[]) {
+//   try {
+//     const reasons = await Promise.all(
+//       promises.map((promise) =>
+//         promise.then(
+//           (val) => {
+//             throw val;
+//           },
+//           (reason) => reason,
+//         ),
+//       ),
+//     );
+//     throw reasons;
+//   } catch (firstResolved) {
+//     return firstResolved;
+//   }
+// }
