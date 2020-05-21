@@ -10,7 +10,10 @@ async function search(dir: string, keyword: string) {
 
   const fileList = await findAllFiles(dir);
 
-  const results = await searchKeywordFromFiles(fileList, keyword);
+  console.log(`${fileList.length} files are queued for searching.`);
+  console.log('Searching the keyword now...');
+
+  const results = await searchKeywordFromFiles([...fileList], keyword);
 
   printResults(results, fileList);
 }

@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as readline from 'readline';
-import { Result } from './types';
 import { MAX_OPEN_FILE_COUNT } from './constants';
 
 /**
@@ -62,47 +61,21 @@ export async function searchKeywordFromFiles(
   fileList: string[],
   keyword: string,
 ) {
-  console.log(fileList.length);
-  const results: Result[] = [];
+  const results: string[] = [];
   const openedFilesMap = {};
-  const tasks = [];
-  let fileIndex = 0;
+  const tasks: Promise<unknown>[] = [];
 
-  while (fileIndex < fileList.length) {
+  while (fileList.length) {
     if (Object.keys(openedFilesMap).length < MAX_OPEN_FILE_COUNT) {
-      tasks.push(
-        new Promise((resolve) => {
-          const file = fileList[fileIndex];
-
-          const stream = fs.createReadStream(file);
-          const rl = readline.createInterface({
-            input: stream,
-          });
-
-          openedFilesMap[file] = true;
-
-          let lineNo = 1;
-
-          rl.on('line', (line: string) => {
-            if (new RegExp(keyword, 'g').test(line)) {
-              results.push({ file, line: lineNo });
-              rl.close();
-              rl.removeAllListeners();
-              stream.destroy();
-            }
-            lineNo++;
-          });
-
-          stream.on('close', () => {
-            resolve();
-            delete openedFilesMap[file];
-          });
-        }),
+      const task = processFile(
+        fileList.pop(),
+        keyword,
+        openedFilesMap,
+        results,
       );
-      fileIndex++;
+
+      tasks.push(task);
     } else {
-      // Need to let main event halt, and execute sub events
-      // It could be better if there is Promise.any(), which is currently in TC39 Candidate Stage
       await Promise.all(tasks);
     }
   }
@@ -113,42 +86,53 @@ export async function searchKeywordFromFiles(
 }
 
 /**
+ * Process individual file by searching the keyword one by one
+ * @param file
+ * @param keyword
+ * @param openedFilesMap
+ * @param results
+ */
+export function processFile(
+  file: string,
+  keyword: string,
+  openedFilesMap: {},
+  results: string[],
+) {
+  const task = new Promise((resolve) => {
+    const stream = fs.createReadStream(file);
+    const rl = readline.createInterface({
+      input: stream,
+    });
+
+    openedFilesMap[file] = true;
+
+    rl.on('line', (line: string) => {
+      if (new RegExp(keyword, 'g').test(line)) {
+        results.push(file);
+        rl.close();
+        rl.removeAllListeners();
+        stream.destroy();
+      }
+    });
+
+    stream.on('close', () => {
+      resolve();
+      delete openedFilesMap[file];
+    });
+  });
+
+  return task;
+}
+
+/**
  * Print results
  * @param results
  */
-export function printResults(results: Result[], fileList: string[]) {
+export function printResults(results: string[], fileList: string[]) {
   results.forEach((result) => {
-    console.log(`File: ${result.file}`);
-    console.log(`Line: ${result.line}`);
+    console.log(`File: ${result}`);
   });
 
-  const uniqueFiles = [...new Set(results.map((result) => result.file))];
-
   console.log(`Count of searched files: ${fileList.length}`);
-  console.log(`Count of files containing keyword: ${uniqueFiles.length}`);
   console.log(`Count of lines containing keyword: ${results.length}`);
 }
-
-// /**
-//  * Polyfill for Promise.any which is currently in TC39 Candidate Stage
-//  * The promise any gets resolved if any of the promise from the array gets resolved
-//  * From https://github.com/tc39/proposal-promise-any/issues/6
-//  * @param promises
-//  */
-// export async function promiseAny(promises: Promise<any>[]) {
-//   try {
-//     const reasons = await Promise.all(
-//       promises.map((promise) =>
-//         promise.then(
-//           (val) => {
-//             throw val;
-//           },
-//           (reason) => reason,
-//         ),
-//       ),
-//     );
-//     throw reasons;
-//   } catch (firstResolved) {
-//     return firstResolved;
-//   }
-// }
