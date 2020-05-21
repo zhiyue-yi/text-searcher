@@ -33,3 +33,20 @@ There is a limitation on the maximum number of files can be open at the same tim
 `await Promise.all(tasks);` has to be executed after the number of opened file streams hit the maximum number. Otherwise, the program will be infinitely looping within `while` loop. After executing `await Promise.all(tasks);`, the async functions can be actually executed and as a results, opened file streams can be processed and cleared.
 
 # Performance Testing
+
+No. of searched files: 38476
+No. of lines searched: 24194209
+Avg. No. of lines per file: 629
+
+No. of lines containing keyword: 852
+Time elapsed: 48.305 seconds
+
+# Limitation
+
+Node.js is single-threaded, so that only one thread is running at one time. Although event loop helps to ease I/O intensive tasks and it looks like multiple files can be searched at the same time, yet it's not true multi-threading programming. Three down sides are observed from this program:
+
+1. In the main function, a batch of files can be queued in one time. Then `await Promise.all(tasks);` needs to be triggered so that async functions can be processed. And, only after all the current async functions need to be fully processed, can the next batch of files be queued in the main function.
+
+2. If one file is extremely large, it will still in process while other file has completed. However, due to this incomplete large file, the next batch of files cannot be queued and start to process. It becomes the bottleneck of program performance.
+
+3. Node.js has Worker to support multi-thread programming, however, it seems a bit difficult to conduct message passing among workers. Some external messaging tools may be needed to ease the implementation.
