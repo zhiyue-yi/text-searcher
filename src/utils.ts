@@ -45,7 +45,7 @@ export async function findAllFiles(dir: string) {
 
 /**
  * Collect paths for a given directory's sub-directory and files
- * @param dir
+ * @param dir The parent directory
  */
 export function collectDirs(dir: string) {
   const files = fs.readdirSync(dir).map((file) => `${dir}/${file}`);
@@ -87,10 +87,10 @@ export async function searchKeywordFromFiles(
 
 /**
  * Process individual file by searching the keyword one by one
- * @param file
- * @param keyword
- * @param openedFilesMap
- * @param results
+ * @param file The path of the file to be processed
+ * @param keyword The keyword to find
+ * @param openedFilesMap The object to control the number of files to be read concurrently
+ * @param results The result array
  */
 export function processFile(
   file: string,
