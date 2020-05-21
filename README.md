@@ -5,15 +5,19 @@ Text Searcher is a command line tool to search texts in files with a directory g
 # Installation
 
 Install the dependencies
+
 `npm install`
 
 Run text searcher provided the target path and keyword
+
 `npm start -- [path] [keyword]`
 
 Example: search "TODO" under "./tests/sample" directory
+
 `npm start -- ./tests/sample TODO`
 
 Run unit tests
+
 `npm run test`
 
 # Program Flow
