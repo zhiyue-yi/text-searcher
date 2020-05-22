@@ -39,10 +39,13 @@ There is a limitation on the maximum number of files can be open at the same tim
 # Performance Testing
 
 No. of searched files: 38476
+
 No. of lines searched: 24194209
+
 Avg. No. of lines per file: 629
 
 No. of lines containing keyword: 852
+
 Time elapsed: 48.305 seconds
 
 # Limitation
