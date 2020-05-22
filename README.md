@@ -92,6 +92,6 @@ Node.js is single-threaded, so that only one thread is running at one time. Alth
 
 1. In the main function, a batch of files can be queued in one time. Then `await Promise.all(tasks);` needs to be triggered so that async functions can be processed. And, only after all the current async functions need to be fully processed, can the next batch of files be queued in the main function.
 
-2. If one file is extremely large, it will still in process while other file has completed. However, due to this incomplete large file, the next batch of files cannot be queued and start to process. It becomes the bottleneck of program performance.
+2. If one file is extremely large, it will still be in process while other files have completed. However, due to this incomplete large file, the next batch of files cannot be queued and start to process. It becomes the bottleneck of program performance.
 
 3. Node.js has Worker to support multi-thread programming, however, it seems a bit difficult to conduct message passing among workers. Some external messaging tools may be needed to ease the implementation.
