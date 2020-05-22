@@ -64,12 +64,13 @@ export async function searchKeywordFromFiles(
   const results: string[] = [];
   const openedFilesMap = {};
   const tasks: Promise<unknown>[] = [];
+  const keywordReg = new RegExp(keyword, 'g');
 
   while (fileList.length) {
     if (Object.keys(openedFilesMap).length < MAX_OPEN_FILE_COUNT) {
       const task = processFile(
         fileList.pop(),
-        keyword,
+        keywordReg,
         openedFilesMap,
         results,
       );
@@ -94,7 +95,7 @@ export async function searchKeywordFromFiles(
  */
 export function processFile(
   file: string,
-  keyword: string,
+  keywordReg: RegExp,
   openedFilesMap: {},
   results: string[],
 ) {
@@ -107,7 +108,7 @@ export function processFile(
     openedFilesMap[file] = true;
 
     rl.on('line', (line: string) => {
-      if (new RegExp(keyword, 'g').test(line)) {
+      if (keywordReg.test(line)) {
         results.push(file);
         rl.close();
         rl.removeAllListeners();
