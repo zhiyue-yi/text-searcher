@@ -38,9 +38,9 @@ There is a limitation on the maximum number of files can be open at the same tim
 
 # Performance Testing
 
-## 1 This Project
+## 1 A small JavaScript Project
 
-No. of searched files: 6210
+No. of searched files: 6889
 
 No. of lines searched: 813807
 
