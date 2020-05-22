@@ -38,15 +38,53 @@ There is a limitation on the maximum number of files can be open at the same tim
 
 # Performance Testing
 
-No. of searched files: 38476
+## 1 This Project
 
-No. of lines searched: 24194209
+No. of searched files: 6210
+
+No. of lines searched: 813807
+
+Avg. No. of lines per file: 131
+
+No. of lines containing keyword: 134
+
+Time elapsed: 4.216 seconds
+
+## 2 4 JavaScript Projects with smaller node_modules
+
+No. of searched files: 19586
+
+No. of lines searched: 23408923
+
+Avg. No. of lines per file: 1196
+
+No. of lines containing keyword:
+
+Time elapsed: 47.732 seconds
+
+## 3 7 JavaScript Projects with node_modules and 2 Python projects
+
+No. of searched files: 38504
+
+No. of lines searched: 24194678
 
 Avg. No. of lines per file: 629
 
-No. of lines containing keyword: 852
+No. of lines containing keyword: 849
 
 Time elapsed: 48.305 seconds
+
+## 4 4 JavaScript Projects with large node_modules
+
+No. of searched files: 68693
+
+No. of lines searched: 9225014
+
+Avg. No. of lines per file: 135
+
+No. of lines containing keyword: 1306
+
+Time elapsed: 59.975 seconds
 
 # Limitation
 
