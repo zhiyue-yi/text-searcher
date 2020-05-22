@@ -38,7 +38,7 @@ There is a limitation on the maximum number of files can be open at the same tim
 
 # Performance Testing
 
-## 1 A small JavaScript Project
+## 1. A small JavaScript Project
 
 No. of searched files: 6889
 
@@ -50,7 +50,7 @@ No. of lines containing keyword: 134
 
 Time elapsed: 4.216 seconds
 
-## 2 4 JavaScript Projects with smaller node_modules
+## 2. 4 JavaScript Projects with smaller node_modules
 
 No. of searched files: 19586
 
@@ -62,7 +62,7 @@ No. of lines containing keyword:
 
 Time elapsed: 47.732 seconds
 
-## 3 7 JavaScript Projects with node_modules and 2 Python projects
+## 3. 7 JavaScript Projects with node_modules and 2 Python projects
 
 No. of searched files: 38504
 
@@ -74,7 +74,7 @@ No. of lines containing keyword: 849
 
 Time elapsed: 48.305 seconds
 
-## 4 4 JavaScript Projects with large node_modules
+## 4. 4 JavaScript Projects with large node_modules
 
 No. of searched files: 68693
 
