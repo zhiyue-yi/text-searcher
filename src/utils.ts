@@ -32,7 +32,7 @@ export async function findAllFiles(dir: string) {
     const isDirectory = fs.statSync(currentDir).isDirectory();
 
     if (isDirectory) {
-      console.log(`File queued: ${currentDir}`);
+      // console.log(`File queued: ${currentDir}`);
       const subDirs = collectDirs(currentDir);
       dirQueue.push(...subDirs);
     } else {

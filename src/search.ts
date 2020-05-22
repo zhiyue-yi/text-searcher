@@ -8,6 +8,7 @@ import {
 async function search(dir: string, keyword: string) {
   validateDir(dir);
 
+  console.log(`Listing all the files into the queue...`);
   const fileList = await findAllFiles(dir);
 
   console.log(`${fileList.length} files are queued for searching.`);
